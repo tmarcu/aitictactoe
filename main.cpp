@@ -11,7 +11,7 @@
 bool player = true; /* True = X False = O Player */
 	
 int handle_button(int *, int *, SDL_Rect *, short int *);
-bool check_win(short int *);
+int check_win(short int *);
 
 int main(int argc, char *argv[]) 
 {
@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 	short int states[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int valid = 0;
 	int i;
+	int ret;
 	int mx, my;
 
 	bool done = false;
@@ -79,22 +80,59 @@ int main(int argc, char *argv[])
 			}
 			SDL_Flip(surface);
 		}
+		ret = check_win(states);
+		if (ret == 1) {
+			printf("Player 1 won\n");
+			done = true;
+		} else if (ret == 2) {
+			printf("Player 2 won\n");
+			done = true;
+		} else if (ret == 0){
+			printf("Draw!\n");
+			done = true;
+		} else {
+			continue;
+		}
 	}
+
 	SDL_Quit();
 
 	return 0;
 }
 
-bool check_win(short int *state)
+int check_win(short int *state)
 {
+	int i;
+
 	/* Player one won -> 1 + 1 + 1 */
 	if ((state[0] + state[1] + state[2] == 3) ||
+		(state[3] + state[4] + state[5] == 3) ||
+		(state[6] + state[7] + state[8] == 3) ||
 		(state[0] + state[3] + state[6] == 3) ||
-		(state[0] + state[4] + state[8] == 3)) {
-			player = true;
-			return true;
+		(state[1] + state[4] + state[7] == 3) ||
+		(state[2] + state[5] + state[8] == 3) ||
+		(state[0] + state[4] + state[8] == 3) ||
+		(state[2] + state[4] + state[6] == 3)) {
+			return 1;
 	}
-	return true;
+
+	if ((state[0] + state[1] + state[2] == 30) ||
+		(state[3] + state[4] + state[5] == 30) ||
+		(state[6] + state[7] + state[8] == 30) ||
+		(state[0] + state[3] + state[6] == 30) ||
+		(state[1] + state[4] + state[7] == 30) ||
+		(state[2] + state[5] + state[8] == 30) ||
+		(state[0] + state[4] + state[8] == 30) ||
+		(state[2] + state[4] + state[6] == 30)) {
+			return 2;
+	}
+	
+	for (i = 0; i < 9; i++) {
+		if (state[i] == 0)
+			return -1;
+	}
+
+	return 0;
 }
 
 /* Set the x/y coordinate for the X and O images to be places based on mouse */
@@ -107,7 +145,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[0] == 0) {
-			state[0] = player ? 1 : 2;
+			state[0] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x > 140 && *x < 270 && *y < 130) {
@@ -116,7 +154,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[1] == 0) {
-			state[1] = player ? 1 : 2;
+			state[1] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x > 280 && *x < 410 && *y < 130) {
@@ -125,7 +163,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[2] == 0) {
-			state[2] = player ? 1 : 2;
+			state[2] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x < 130 && *y > 130 && *y < 270) { /* Second Row */
@@ -134,7 +172,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[3] == 0) {
-			state[3] = player ? 1 : 2;
+			state[3] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x > 140 && *x < 270 && *y > 130 && *y < 270) {
@@ -143,7 +181,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[4] == 0) {
-			state[4] = player ? 1 : 2;
+			state[4] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else 	if (*x > 280 && *x < 410 && *y > 130 && *y < 270) {
@@ -152,7 +190,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[5] == 0) {
-			state[5] = player ? 1 : 2;
+			state[5] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x < 130 && *y > 280 && *y < 410) { /* Third Row */
@@ -161,7 +199,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[6] == 0) {
-			state[6] = player ? 1 : 2;
+			state[6] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x > 140 && *x < 270 && *y > 280 && *y < 410) {
@@ -170,7 +208,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[7] == 0) {
-			state[7] = player ? 1 : 2;
+			state[7] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	} else if (*x > 280 && *x < 410 && *y > 280 && *y < 410) {
@@ -179,7 +217,7 @@ int handle_button(int *x, int *y, SDL_Rect *pos, short int *state)
 		pos->h = 0;
 		pos->w = 0;
 		if (state[8] == 0) {
-			state[8] = player ? 1 : 2;
+			state[8] = player ? 1 : 10;
 			return 0;
 		} else return -1;
 	}
